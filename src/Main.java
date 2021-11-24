@@ -4,19 +4,13 @@ import resources.data_types.*;
 
 public class Main {
     public static void main(String[] args){
-        short size = 10;
-        Matrix randMx = new Matrix(new double[][]{
-                {4, 5, 6, 7, 8},
-                {1, 0, 2, 5, 0},
-                {2, 3, 0, 0, 0},
-                {10, 0, 0, 0, 0},
-                {3, 0, 4, 6, 3}
-        });
-        randMx.fillRandomValues(-1, 1);
-
-        System.out.println(randMx.determinant());
-        System.out.println(randMx.fastDeterminant());
-        System.out.println(randMx.cycledDeterminant());
+        short size = 3;
+        Matrix mx1 = new Matrix(size, size);
+        mx1.fillRandomValues(-1, 1);
+        Matrix mx2 = mx1.getClone();
+        mx2.makeIdentity();
+        System.out.println(mx1);
+        System.out.println(mx1.mul(mx2));
     }
 }
 

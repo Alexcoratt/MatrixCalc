@@ -3,7 +3,6 @@ import resources.arithmetics.Rand;
 import resources.exceptions.*;
 
 public class Matrix {
-    public final short MAX_SIZE = 1024;
     private double[][] lines;
     private short height, width;
     private Rand rand;
@@ -11,7 +10,6 @@ public class Matrix {
     public Matrix(double[] ...lines) throws MatrixErrorExeption {
         this.lines = lines;
         short height = (short)this.lines.length, width = (short)this.lines[0].length;
-        //if (width * height > MAX_SIZE){throw new MatrixSizeOutException();}
         this.height = height;
         this.width = width;
         if (!this.checkWidth()) {
@@ -21,7 +19,6 @@ public class Matrix {
     }
 
     public Matrix(short height, short width) throws MatrixSizeOutException {
-        //if (width * height > MAX_SIZE){throw new MatrixSizeOutException();}
         this.height = height;
         this.width = width;
         this.lines = new double[height][width];
@@ -227,6 +224,17 @@ public class Matrix {
         return result;
     }
 
+    public void fillZero(){
+        this.lines = this.mul(0).getLines();
+    }
+
+    public void makeIdentity(){
+        this.fillZero();
+        for (short i = 0; i < Math.min(this.getWidth(), this.getHeight()); i++){
+            this.setValue(i, i, 1);
+        }
+    }   // превращение в единичную матрицу
+
     public Matrix mul(Matrix other) throws MatrixErrorExeption{
         if (other.getClass() == SingleNum.class)
             return this.mul(other.getValue(0, 0));
@@ -256,7 +264,7 @@ public class Matrix {
         result = new Matrix(this.getHeight(), this.getWidth());
         for (i = 0; i < this.getHeight(); i++) {
             for (j = 0; j < this.getWidth(); j++) {
-                result.setValue(i, j, other * this.getValue(i, j));
+                result.setValue(i, j, this.getValue(i, j) * other + 0);
             }
         }
         return result;
