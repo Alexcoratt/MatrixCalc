@@ -59,25 +59,33 @@ public class Matrix {
         }
     }
 
+    public void setColumn(int colNum, double[] array){
+        this.setColumn((short)colNum, array);
+    }
+
     public void setRow(short rowNum, double[] array){
         for (short j = 0; j < this.getWidth(); j++){
             this.setValue(rowNum, j, array[j]);
         }
     }
 
+    public void setRow(int rowNum, double[] array){
+        this.setRow((short)rowNum, array);
+    }
+
     public void setLine(short lineNum, Matrix line) throws MatrixSizeOutException {
         if (line.getWidth() == 1){
-            for (short i = 0; i < line.getHeight(); i++){
-                this.setValue(i, lineNum, line.getValue(i, 0));
-            }
+            this.setColumn(lineNum, line.toArray());
         }
         else if (line.getHeight() == 1){
-            for (short j = 0; j < line.getWidth(); j++){
-                this.setValue(lineNum, j, line.getValue(0, j));
-            }
+            this.setRow(lineNum, line.toArray());
         }
         else throw new MatrixSizeOutException();
     }   // устанавливает значение линии под номером lineNum (линия - строка или столбец, в зависимости от вида матрицы line)
+
+    public void setLine(int lineNum, Matrix line){
+        setLine((short)lineNum, line);
+    }
 
     public Matrix getColumn(short colNum){
         Matrix result = new Matrix(this.getHeight(), 1);
@@ -87,12 +95,20 @@ public class Matrix {
         return result;
     }
 
+    public Matrix getColumn(int colNum){
+        return this.getColumn((short) colNum);
+    }
+
     public Matrix getRow(short rowNum){
         Matrix result = new Matrix(1, this.getWidth());
         for (short j = 0; j < this.getWidth(); j++){
             result.setValue((short)0, j, this.getValue(rowNum, j));
         }
         return result;
+    }
+
+    public Matrix getRow(int rowNum){
+        return this.getRow((short) rowNum);
     }
 
     public double[] toArray(){
@@ -329,13 +345,54 @@ public class Matrix {
         return this.rowSum(numRow1, numRow2, 1);
     }
 
-    private static boolean isZero(double[] array){
+    public Matrix getClone(){
+        return new Matrix(this.getLines());
+    }
+
+    public boolean isZeroMx(){
         double result = 0;
-        for (double elem : array){
+        for (double elem : this.toArray()){
             result += Math.abs(elem);
         }
         return (result == 0);
-    }
+    }   // возвращает true, если данная матрица нулевая
+
+    public double cycledDeterminant() throws NonSquareMatrixException {
+        double coeff = 1, topValue;
+        Matrix mx = this.getClone();
+        short j, num = 1; // номер прибавляемой в следующем цикле строки или столбца
+        if (mx.getWidth() != mx.getHeight()){
+            throw new NonSquareMatrixException();
+        }
+        while (mx.getWidth() > 2){
+
+            for (j = 0; j < mx.getWidth(); j++){
+                if (mx.getColumn(j).isZeroMx() || mx.getRow(j).isZeroMx()){
+                    return 0;
+                }
+            }
+
+            while (mx.getValue(0, 0) == 0){
+                mx.setLine(0, mx.colSum((short)0, num));
+                mx.setLine(0, mx.rowSum((short)0, num));
+                num++;
+            }   // прибавляем строки/столбцы к верхней строке/левому столбцу до тех пор,
+            // пока верхнее левое верхнее значение не станет ненулевым
+
+            for (j = 0; j < mx.getWidth(); j++){
+                topValue = mx.getValue(0, j);
+                if (topValue != 0) {
+                    coeff *= topValue;
+                    mx.setLine(j, mx.getColumn(j).mul(1 / topValue).sum(mx.getColumn((short) 0).mul((j > 0) ? -1 : 0)));
+                }
+            }
+
+            mx = mx.minor(0, 0);
+        }
+
+        return (mx.getValue(0, 0) * mx.getValue(1, 1) -
+                mx.getValue(0, 1) * mx.getValue(1, 0)) * coeff;
+    }   // метод нахождения определителя матрицы с помощью цикла, а не рекурсии. Работает быстро, тратит меньше памяти
 
     public double fastDeterminant(Matrix mx) throws NonSquareMatrixException {
         if (mx.getWidth() != mx.getHeight()){
@@ -346,17 +403,19 @@ public class Matrix {
                     mx.getValue(0, 1) * mx.getValue(1, 0);
         }
         double topValue, coeff = 1; // при умножении строки или столбца матрицы на ненулевое значение
-                                    // определитель умножается на него же
+                                    // определитель умножается на него же (а значит требуется деление для получения исходного значания)
         short j, num = 1; // номер прибавляемой в следующем цикле строки или столбца
 
         for (j = 0; j < mx.getWidth(); j++){
-            if (isZero(this.getColumn(j).toArray()) || isZero(this.getRow(j).toArray()))
+            if (mx.getColumn(j).isZeroMx() || mx.getRow(j).isZeroMx()){
                 return 0;
+            }
         }
 
         while (mx.getValue(0, 0) == 0){
-            mx.setLine((short)0, mx.colSum((short)0, num));
-            mx.setLine((short)0, mx.rowSum((short)0, num));
+            mx.setLine(0, mx.colSum((short)0, num));
+            mx.setLine(0, mx.rowSum((short)0, num));
+            num++;
         }   // прибавляем строки/столбцы к верхней строке/левому столбцу до тех пор,
             // пока верхнее левое верхнее значение не станет ненулевым
 
@@ -367,14 +426,14 @@ public class Matrix {
                 mx.setLine(j, mx.getColumn(j).mul(1 / topValue).sum(mx.getColumn((short) 0).mul((j > 0) ? -1 : 0)));
             }
         }
-        double x = this.getWidth();
+
         return mx.minor(0, 0).fastDeterminant() * coeff;
     }   // функция быстрого нахождения детерминанта матрицы
         // имеет пониженную точность (относительная погрешность не превосходит 1.0E-13),
         // в отличие от this.determinant(), но многократно превосходит его по скорости
 
     public double fastDeterminant() throws NonSquareMatrixException {
-        return this.fastDeterminant(new Matrix(this.getLines()));
+        return this.fastDeterminant(this.getClone());
     }
 
     public double getMax(){
