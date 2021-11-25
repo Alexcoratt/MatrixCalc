@@ -1,16 +1,12 @@
-import resources.Parser;
-import resources.arithmetics.*;
 import resources.data_types.*;
 
 public class Main {
     public static void main(String[] args){
-        short size = 3;
+        short size = 10;
         Matrix mx1 = new Matrix(size, size);
-        mx1.fillRandomValues(-1, 1);
-        Matrix mx2 = mx1.getClone();
-        mx2.makeIdentity();
+        mx1.fillRandomValues(-10, 10);
         System.out.println(mx1);
-        System.out.println(mx1.mul(mx2));
+        System.out.println(mx1.mul(mx1.opposite()));
     }
 }
 

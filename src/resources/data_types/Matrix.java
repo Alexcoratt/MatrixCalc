@@ -226,7 +226,7 @@ public class Matrix {
 
     public void fillZero(){
         this.lines = this.mul(0).getLines();
-    }
+    }   // заполнение матрицы нулями
 
     public void makeIdentity(){
         this.fillZero();
@@ -234,6 +234,38 @@ public class Matrix {
             this.setValue(i, i, 1);
         }
     }   // превращение в единичную матрицу
+
+    public Matrix transposed(){
+        double tmp;
+        Matrix result = this.getClone();
+        short i, j;
+        for (i = 0; i < this.getHeight(); i++){
+            for (j = 0; j < this.getWidth(); j++){
+                result.setValue(j, i, this.getValue(i, j));
+                result.setValue(i, j, this.getValue(j, i));
+            }
+        }
+        return result;
+    }
+
+    public Matrix opposite() throws DegenerateMatrixException{
+        if (this.cycledDeterminant() == 0){
+            throw new DegenerateMatrixException();
+        }
+
+        return this.adjugate().mul(1 / this.cycledDeterminant());
+    }
+
+    public Matrix adjugate(){
+        Matrix result = new Matrix(this.getHeight(), this.getWidth());
+        short i, j;
+        for (i = 0; i < this.getHeight(); i++){
+            for (j = 0; j < this.getWidth(); j++){
+                result.setValue(i, j, this.fastComplement(j, i));
+            }
+        }
+        return result;
+    }   // метод нахождения присоединенной (союзной/взаимной) матрицы
 
     public Matrix mul(Matrix other) throws MatrixErrorExeption{
         if (other.getClass() == SingleNum.class)
@@ -318,6 +350,18 @@ public class Matrix {
 
     public double complement(short row, short col) {
         return Math.pow(-1, row + col) * this.minor(row, col).determinant();
+    }   // алгебраическое дополнение, основанное на рекуррентном методе детерминирования
+
+    public double complement(int row, int col) {
+        return this.complement((short) row, (short) col);
+    }
+
+    public double fastComplement(short row, short col) {
+        return Math.pow(-1, row + col) * this.minor(row, col).cycledDeterminant();
+    }   // алгебраическое дополнение, основанное на циклическом методе детерминирования
+
+    public double fastComplement(int row, int col){
+        return this.fastComplement((short) row, (short) col);
     }
 
     public double determinant() throws NonSquareMatrixException {
