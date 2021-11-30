@@ -11,7 +11,7 @@ public class Operation {
     }
 
     public Matrix calculate(){
-        return new Matrix(new double[][]{{-1.0}});
+        return new Matrix();
     }
 
     public void describe(){

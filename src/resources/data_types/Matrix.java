@@ -249,11 +249,12 @@ public class Matrix {
     }
 
     public Matrix opposite() throws DegenerateMatrixException{
-        if (this.cycledDeterminant() == 0){
+        double determinant = this.cycledDeterminant();
+        if (determinant == 0){
             throw new DegenerateMatrixException();
         }
 
-        return this.adjugate().mul(1 / this.cycledDeterminant());
+        return this.adjugate().mul(1 / determinant);
     }
 
     public Matrix adjugate(){
