@@ -11,7 +11,7 @@ public class Operation {
     }
 
     public Matrix calculate(){
-        return new Matrix();
+        return new Matrix(1, 1);
     }
 
     public void describe(){

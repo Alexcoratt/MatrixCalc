@@ -2,12 +2,14 @@ package resources.data_types;
 import resources.arithmetics.Rand;
 import resources.exceptions.*;
 
+import java.math.BigDecimal;
+
 public class Matrix {
-    private double[][] lines;
+    private BigDecimal[][] lines;
     private short height, width;
     private Rand rand;
 
-    public Matrix(double[] ...lines) throws MatrixErrorExeption {
+    public Matrix(BigDecimal[][] lines) throws MatrixErrorExeption {
         this.lines = lines;
         short height = (short)this.lines.length, width = (short)this.lines[0].length;
         this.height = height;
@@ -21,7 +23,7 @@ public class Matrix {
     public Matrix(short height, short width) throws MatrixSizeOutException {
         this.height = height;
         this.width = width;
-        this.lines = new double[height][width];
+        this.lines = new BigDecimal[height][width];
         rand = new Rand();
     }
 
@@ -29,9 +31,11 @@ public class Matrix {
         this((short) height, (short) width);
     }
 
-    public void setValue(short row, short col, double value){
+    public void setValue(short row, short col, BigDecimal value){
         this.lines[row][col] = value;
     }
+
+    public void setValue(short row, short col, double value){ this.setValue(row, col, BigDecimal.valueOf(value)); }
 
     public void setValue(short row, short col){
         this.setValue(row, col, 0);
@@ -50,23 +54,23 @@ public class Matrix {
         }
     }
 
-    public void setColumn(short colNum, double[] array){
+    public void setColumn(short colNum, BigDecimal[] array){
         for (short i = 0; i < this.getHeight(); i++){
             this.setValue(i, colNum, array[i]);
         }
     }
 
-    public void setColumn(int colNum, double[] array){
+    public void setColumn(int colNum, BigDecimal[] array){
         this.setColumn((short)colNum, array);
     }
 
-    public void setRow(short rowNum, double[] array){
+    public void setRow(short rowNum, BigDecimal[] array){
         for (short j = 0; j < this.getWidth(); j++){
             this.setValue(rowNum, j, array[j]);
         }
     }
 
-    public void setRow(int rowNum, double[] array){
+    public void setRow(int rowNum, BigDecimal[] array){
         this.setRow((short)rowNum, array);
     }
 
@@ -108,8 +112,8 @@ public class Matrix {
         return this.getRow((short) rowNum);
     }
 
-    public double[] toArray(){
-        double[] result = new double[getWidth() * this.getHeight()];
+    public BigDecimal[] toArray(){
+        BigDecimal[] result = new BigDecimal[getWidth() * this.getHeight()];
         short i, j;
         for (i = 0; i < this.getHeight(); i++){
             for (j = 0; j < this.getWidth(); j++){
@@ -119,11 +123,11 @@ public class Matrix {
         return result;
     } // переводит матрицу в одномерный массив
 
-    public double getValue(short row, short col){
+    public BigDecimal getValue(short row, short col){
         return this.lines[row][col];
     }
 
-    public double getValue(int row, int col){
+    public BigDecimal getValue(int row, int col){
         return this.getValue((short) row, (short) col);
     }
 
@@ -135,8 +139,8 @@ public class Matrix {
         return height;
     }
 
-    public double[][] getLines() {
-        double[][] result = new double[this.getHeight()][this.getWidth()];
+    public BigDecimal[][] getLines() {
+        BigDecimal[][] result = new BigDecimal[this.getHeight()][this.getWidth()];
         short i, j;
         for (i = 0; i < this.getHeight(); i++){
             for (j = 0; j < this.getWidth(); j++){
@@ -147,7 +151,7 @@ public class Matrix {
     }
 
     private boolean checkWidth(Matrix mx){
-        for (double[] line : mx.getLines()){
+        for (BigDecimal[] line : mx.getLines()){
             if (line.length != mx.getWidth()){
                 return false;
             }
@@ -161,8 +165,8 @@ public class Matrix {
 
     public String toString(String line_div, String num_div){
         StringBuilder result = new StringBuilder();
-        for (double[] line : this.getLines()){
-            for (double num : line){
+        for (BigDecimal[] line : this.getLines()){
+            for (BigDecimal num : line){
                 result.append(num).append(num_div);
             }
             result.append(line_div);
@@ -170,8 +174,8 @@ public class Matrix {
         return result.toString();
     }
 
-    static short getNumLength(double num){
-        return (short)Double.toString(num).length();
+    static short getNumLength(BigDecimal num){
+        return (short)num.toString().length();
     }
 
     static String strMul(String str, int num){
@@ -218,7 +222,7 @@ public class Matrix {
         short i, j;
         for (i = 0; i < this.getHeight(); i++){
             for (j = 0; j < this.getWidth(); j++){
-                result.setValue(i, j, this.getValue(i, j) + other.getValue(i, j));
+                result.setValue(i, j, this.getValue(i, j).add(other.getValue(i, j)));
             }
         }
         return result;
@@ -249,12 +253,12 @@ public class Matrix {
     }
 
     public Matrix opposite() throws DegenerateMatrixException{
-        double determinant = this.cycledDeterminant();
-        if (determinant == 0){
+        BigDecimal determinant = this.cycledDeterminant();
+        if (determinant.equals(BigDecimal.valueOf(0))){
             throw new DegenerateMatrixException();
         }
 
-        return this.adjugate().mul(1 / determinant);
+        return this.adjugate().mul(BigDecimal.valueOf(1).divide(determinant));
     }
 
     public Matrix adjugate(){
@@ -275,15 +279,15 @@ public class Matrix {
             throw new UnacceptableSizeMarixException();
         short i, j, num;
         Matrix result = new Matrix(this.getHeight(), other.getWidth());
-        double singleNum;
-        double[] row, col;
+        BigDecimal singleNum;
+        BigDecimal[] row, col;
         for (i = 0; i < result.getHeight(); i++){
             for (j = 0; j < result.getWidth(); j++){
-                singleNum = 0;
+                singleNum = BigDecimal.valueOf(0);
                 row = this.getRow(i).toArray();
                 col = other.getColumn(j).toArray();
                 for (num = 0; num < row.length; num++){
-                    singleNum += row[num] * col[num];
+                    singleNum = singleNum.add(row[num].multiply(col[num]));
                 }
                 result.setValue(i, j, singleNum);
             }
@@ -291,16 +295,20 @@ public class Matrix {
         return result;
     }
 
-    public Matrix mul(double other){
+    public Matrix mul(BigDecimal other){
         short i, j;
         Matrix result;
         result = new Matrix(this.getHeight(), this.getWidth());
         for (i = 0; i < this.getHeight(); i++) {
             for (j = 0; j < this.getWidth(); j++) {
-                result.setValue(i, j, this.getValue(i, j) * other + 0);
+                result.setValue(i, j, this.getValue(i, j).multiply(other));
             }
         }
         return result;
+    }
+
+    public Matrix mul(double other){
+        return this.mul(BigDecimal.valueOf(other));
     }
 
     static byte shiftFunc(short x, short a){
@@ -349,49 +357,57 @@ public class Matrix {
         return this.minor((short) row, (short) col);
     }
 
-    public double complement(short row, short col) {
-        return Math.pow(-1, row + col) * this.minor(row, col).determinant();
+    public BigDecimal complement(short row, short col) {
+        return this.minor(row, col).determinant().multiply(BigDecimal.valueOf(Math.pow(-1, row + col)));
     }   // алгебраическое дополнение, основанное на рекуррентном методе детерминирования
 
-    public double complement(int row, int col) {
+    public BigDecimal complement(int row, int col) {
         return this.complement((short) row, (short) col);
     }
 
-    public double fastComplement(short row, short col) {
-        return Math.pow(-1, row + col) * this.minor(row, col).cycledDeterminant();
+    public BigDecimal fastComplement(short row, short col) {
+        return this.minor(row, col).cycledDeterminant().multiply(BigDecimal.valueOf(Math.pow(-1, row + col)));
     }   // алгебраическое дополнение, основанное на циклическом методе детерминирования
 
-    public double fastComplement(int row, int col){
+    public BigDecimal fastComplement(int row, int col){
         return this.fastComplement((short) row, (short) col);
     }
 
-    public double determinant() throws NonSquareMatrixException {
+    public BigDecimal determinant() throws NonSquareMatrixException {
         if (this.getWidth() != this.getHeight()){
             throw new NonSquareMatrixException();
         }
         if (this.getWidth() == 2){
-            return this.getValue(0, 0) * this.getValue(1, 1) -
-                    this.getValue(0, 1) * this.getValue(1, 0);
+            return this.getValue(0, 0).multiply(this.getValue(1, 1)).subtract(
+                    this.getValue(0, 1).multiply(this.getValue(1, 0)));
         }
-        double result = 0;
+        BigDecimal result = BigDecimal.valueOf(0);
         for (short j = 0; j < this.getWidth(); j++){
-            result += this.getValue(0, j) * complement((short)0, j);
+            result = result.add(this.getValue(0, j).multiply(complement((short)0, j)));
         }
         return result;
     }   // метод нахождения точного значения детерминанта матрицы
         // отличается крайней медлителльностью при работе с матрицами, длина стороны которых превосходит 10
         // сложность алгоритма растет экспоненциально
 
-    public Matrix colSum(short numCol1, short numCol2, double coeff){
+    public Matrix colSum(short numCol1, short numCol2, BigDecimal coeff){
         return this.getColumn(numCol1).sum(this.getColumn(numCol2).mul(coeff));
+    }
+
+    public Matrix colSum(short numCol1, short numCol2, double coeff){
+        return this.colSum(numCol1, numCol2, BigDecimal.valueOf(coeff));
     }
 
     public Matrix colSum(short numCol1, short numCol2){
         return this.colSum(numCol1, numCol2, 1);
     }
 
-    public Matrix rowSum(short numRow1, short numRow2, double coeff){
+    public Matrix rowSum(short numRow1, short numRow2, BigDecimal coeff){
         return this.getRow(numRow1).sum(this.getRow(numRow2).mul(coeff));
+    }
+
+    public Matrix rowSum(short numRow1, short numRow2, double coeff){
+        return this.rowSum(numRow1, numRow2, BigDecimal.valueOf(coeff));
     }
 
     public Matrix rowSum(short numRow1, short numRow2){
@@ -403,15 +419,16 @@ public class Matrix {
     }
 
     public boolean isZeroMx(){
-        double result = 0;
-        for (double elem : this.toArray()){
-            result += Math.abs(elem);
+        BigDecimal result = BigDecimal.valueOf(0);
+        for (BigDecimal elem : this.toArray()){
+            result = result.add(elem.abs());
         }
-        return (result == 0);
+        return (result.equals(BigDecimal.valueOf(0)));
     }   // возвращает true, если данная матрица нулевая
 
-    public double cycledDeterminant() throws NonSquareMatrixException {
-        double coeff = 1, topValue;
+    public BigDecimal cycledDeterminant() throws NonSquareMatrixException {
+        BigDecimal coeff = BigDecimal.valueOf(1);
+        BigDecimal topValue;
         Matrix mx = this.getClone();
         short j, num = 1; // номер прибавляемой в следующем цикле строки или столбца
         if (mx.getWidth() != mx.getHeight()){
@@ -421,11 +438,11 @@ public class Matrix {
 
             for (j = 0; j < mx.getWidth(); j++){
                 if (mx.getColumn(j).isZeroMx() || mx.getRow(j).isZeroMx()){
-                    return 0;
+                    return BigDecimal.valueOf(0);
                 }
             }
 
-            while (mx.getValue(0, 0) == 0){
+            while (mx.getValue(0, 0).equals(BigDecimal.valueOf(0))){
                 mx.setLine(0, mx.colSum((short)0, num));
                 mx.setLine(0, mx.rowSum((short)0, num));
                 num++;
@@ -434,38 +451,40 @@ public class Matrix {
 
             for (j = 0; j < mx.getWidth(); j++){
                 topValue = mx.getValue(0, j);
-                if (topValue != 0) {
-                    coeff *= topValue;
-                    mx.setLine(j, mx.getColumn(j).mul(1 / topValue).sum(mx.getColumn((short) 0).mul((j > 0) ? -1 : 0)));
+                if (!topValue.equals(BigDecimal.valueOf(0))) {
+                    coeff = coeff.multiply(topValue);
+                    mx.setLine(j, mx.getColumn(j).mul(BigDecimal.valueOf(1).divide(topValue)).
+                            sum(mx.getColumn((short) 0).mul((j > 0) ? -1 : 0)));
                 }
             }
 
             mx = mx.minor(0, 0);
         }
 
-        return (mx.getValue(0, 0) * mx.getValue(1, 1) -
-                mx.getValue(0, 1) * mx.getValue(1, 0)) * coeff;
+        return (mx.getValue(0, 0).multiply(mx.getValue(1, 1)).
+                subtract(mx.getValue(0, 1).multiply(mx.getValue(1, 0)))).multiply(coeff);
     }   // метод нахождения определителя матрицы с помощью цикла, а не рекурсии. Работает быстро, тратит меньше памяти
 
-    public double fastDeterminant(Matrix mx) throws NonSquareMatrixException {
+    public BigDecimal fastDeterminant(Matrix mx) throws NonSquareMatrixException {
         if (mx.getWidth() != mx.getHeight()){
             throw new NonSquareMatrixException();
         }
         if (mx.getWidth() == 2){
-            return mx.getValue(0, 0) * mx.getValue(1, 1) -
-                    mx.getValue(0, 1) * mx.getValue(1, 0);
+            return mx.getValue(0, 0).multiply(mx.getValue(1, 1)).
+                    subtract(mx.getValue(0, 1).multiply(mx.getValue(1, 0)));
         }
-        double topValue, coeff = 1; // при умножении строки или столбца матрицы на ненулевое значение
-                                    // определитель умножается на него же (а значит требуется деление для получения исходного значания)
+        BigDecimal topValue;  // при умножении строки или столбца матрицы на ненулевое значение
+        BigDecimal coeff = BigDecimal.valueOf(1);
+        // определитель умножается на него же (а значит требуется деление для получения исходного значания)
         short j, num = 1; // номер прибавляемой в следующем цикле строки или столбца
 
         for (j = 0; j < mx.getWidth(); j++){
             if (mx.getColumn(j).isZeroMx() || mx.getRow(j).isZeroMx()){
-                return 0;
+                return BigDecimal.valueOf(0);
             }
         }
 
-        while (mx.getValue(0, 0) == 0){
+        while (mx.getValue(0, 0).equals(BigDecimal.valueOf(0))){
             mx.setLine(0, mx.colSum((short)0, num));
             mx.setLine(0, mx.rowSum((short)0, num));
             num++;
@@ -474,38 +493,19 @@ public class Matrix {
 
         for (j = 0; j < mx.getWidth(); j++){
             topValue = mx.getValue(0, j);
-            if (topValue != 0) {
-                coeff *= topValue;
-                mx.setLine(j, mx.getColumn(j).mul(1 / topValue).sum(mx.getColumn((short) 0).mul((j > 0) ? -1 : 0)));
+            if (!topValue.equals(BigDecimal.valueOf(0))) {
+                coeff = coeff.multiply(topValue);
+                mx.setLine(j, mx.getColumn(j).mul(BigDecimal.valueOf(1).divide(topValue)).
+                        sum(mx.getColumn((short) 0).mul((j > 0) ? -1 : 0)));
             }
         }
 
-        return mx.minor(0, 0).fastDeterminant() * coeff;
+        return mx.minor(0, 0).fastDeterminant().multiply(coeff);
     }   // функция быстрого нахождения детерминанта матрицы
         // имеет пониженную точность (относительная погрешность не превосходит 1.0E-13),
         // в отличие от this.determinant(), но многократно превосходит его по скорости
 
-    public double fastDeterminant() throws NonSquareMatrixException {
+    public BigDecimal fastDeterminant() throws NonSquareMatrixException {
         return this.fastDeterminant(this.getClone());
-    }
-
-    public double getMax(){
-        double[] array = this.toArray();
-        double max = array[0];
-        for (double value : array){
-            if (max < value)
-                max = value;
-        }
-        return max;
-    }
-
-    public double getMin(){
-        double[] array = this.toArray();
-        double min = array[0];
-        for (double value : array){
-            if (min > value)
-                min = value;
-        }
-        return min;
     }
 }

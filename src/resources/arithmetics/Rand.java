@@ -1,7 +1,9 @@
 package resources.arithmetics;
 
+import java.math.BigDecimal;
+
 public class Rand {
-    public float randrange(double min, double max){
-        return (float) (Math.random() * (max - min) + min);
+    public BigDecimal randrange(double min, double max){
+        return BigDecimal.valueOf(Math.random() * (max - min) + min);
     }
 }
