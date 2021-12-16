@@ -2,11 +2,7 @@ import resources.data_types.*;
 
 public class Main {
     public static void main(String[] args){
-        short size = 3;
-        Matrix mx1 = new Matrix(size, size);
-        mx1.fillRandomValues(-10, 10);
-        System.out.println(mx1);
-        System.out.println(mx1.mul(mx1.opposite()));
+        System.out.println("Hello, world!");
     }
 }
 
