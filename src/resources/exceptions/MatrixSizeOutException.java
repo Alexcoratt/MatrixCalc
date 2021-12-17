@@ -1,3 +1,3 @@
 package resources.exceptions;
 
-public class MatrixSizeOutException extends UnacceptableSizeMarixException{}
+public class MatrixSizeOutException extends UnacceptableSizeMatrixException {}

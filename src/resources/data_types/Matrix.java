@@ -272,7 +272,7 @@ public class Matrix {
         if (other.getClass() == SingleNum.class)
             return this.mul(other.getValue(0, 0));
         if (this.getWidth() != other.getHeight())
-            throw new UnacceptableSizeMarixException();
+            throw new UnacceptableSizeMatrixException();
         short i, j, num;
         Matrix result = new Matrix(this.getHeight(), other.getWidth());
         double singleNum;
