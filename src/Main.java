@@ -3,15 +3,19 @@ import resources.new_data_types.Value;
 
 public class Main {
     public static void main(String[] args){
-        Value arr[][] = {
+        Value[][] arr = {
                 {new Value(3), new Value(1), new Value(-2)},
-                {new Value(2), new Value(-10.5), new Value(-2)},
-                {new Value(5), new Value(1), new Value(13)}
+                {new Value(2), new Value(-10.5), new Value(-2)}
         };
         Matrix mx = new Matrix(arr);
+        Matrix mx1 = mx.getClone();
+        mx1.transpose();
+
+        System.out.println(mx1);
+        System.out.println();
         System.out.println(mx);
-        mx.decrease(new Value(10));
-        System.out.println(mx);
+        System.out.println();
+        System.out.println(mx1.multiply(mx));
     }
 }
 

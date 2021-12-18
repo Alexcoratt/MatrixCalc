@@ -4,63 +4,67 @@ import java.math.BigDecimal;
 
 // пока что работает с типом данных double
 public class Value {
-    public BigDecimal value;
+    public BigDecimal number;
 
     public Value(double num){
-        value = new BigDecimal(num);
+        number = new BigDecimal(num);
     }
 
     public Value(BigDecimal num){
-        value = num;
+        number = num;
     }
 
     public Value(){
-        value = new BigDecimal(0);
+        number = new BigDecimal(0);
+    }
+
+    public Value getClone(){
+        return new Value(number);
     }
 
 
     // методы суммирования
     public Value sum(Value other){
-        return new Value(value.add(other.value));
+        return new Value(number.add(other.number));
     }
 
     public void increase(Value other){
-        value = value.add(other.value);
+        number = number.add(other.number);
     }
 
 
     // методы вычитания
     public Value subtract(Value other){
-        return new Value(value.subtract(other.value));
+        return new Value(number.subtract(other.number));
     }
 
     public void decrease(Value other){
-        value = value.subtract(other.value);
+        number = number.subtract(other.number);
     }
 
 
     // методы умножения
     public Value multiply(Value other){
-        return new Value(value.multiply(other.value));
+        return new Value(number.multiply(other.number));
     }
 
     public void repeat(Value other){
-        value = value.multiply(other.value);
+        number = number.multiply(other.number);
     }
 
 
     // методы деления
     public Value divide(Value other){
-        return new Value(value.divide(other.value));
+        return new Value(number.divide(other.number));
     }
 
     public void reduce(Value other){
-        value = value.divide(other.value);
+        number = number.divide(other.number);
     }
 
     // перевод в String
     @Override
     public String toString(){
-        return String.valueOf(value);
+        return String.valueOf(number);
     }
 }

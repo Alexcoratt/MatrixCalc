@@ -17,7 +17,7 @@ public class Matrix {
         for (i = 0; i < height; i++){
             rows[i] = new Vector(width);
             for (j = 0; j < width; j++){
-                rows[i].setValue(j, new Value());
+                rows[i].setCell(j, new Cell());
             }
         }
 
@@ -25,14 +25,14 @@ public class Matrix {
         for (j = 0; j < width; j++){
             cols[j] = new Vector(height);
             for (i = 0; i < height; i++){
-                cols[j].setValue(i, getValue(i, j));
+                cols[j].setCell(i, getCell(i, j));
             }
         }
     }
 
     public Matrix(Value[][] mx){
-        width = mx.length;
-        height = mx[0].length;
+        height = mx.length;
+        width = mx[0].length;
 
         rows = new Vector[height];
         int i, j;
@@ -58,16 +58,22 @@ public class Matrix {
         if (height != other.height || width != other.width)
             throw new DifferentSizeMatrixesException();
         Matrix result = new Matrix(height, width);
-        for (int i = 0; i < height; i++){
-            result.getRow(i).increase(other.getRow(i));
+        int i, j;
+        for (i = 0; i < height; i++){
+            for (j = 0; j < width; j++){
+                result.setValue(i, j, getValue(i, j).sum(other.getValue(i, j)));
+            }
         }
         return result;
     }
 
     public Matrix sum(Value other){
         Matrix result = new Matrix(height, width);
-        for (int i = 0; i < height; i++){
-            result.getRow(i).increase(other);
+        int i, j;
+        for (i = 0; i < height; i++){
+            for (j = 0; j < width; j++){
+                result.setValue(i, j, getValue(i, j).sum(other));
+            }
         }
         return result;
     }
@@ -92,16 +98,22 @@ public class Matrix {
         if (height != other.height || width != other.width)
             throw new DifferentSizeMatrixesException();
         Matrix result = new Matrix(height, width);
-        for (int i = 0; i < height; i++){
-            result.getRow(i).decrease(other.getRow(i));
+        int i, j;
+        for (i = 0; i < height; i++){
+            for (j = 0; j < width; j++){
+                result.setValue(i, j, getValue(i, j).subtract(other.getValue(i, j)));
+            }
         }
         return result;
     }
 
     public Matrix subtract(Value other) throws DifferentSizeMatrixesException {
         Matrix result = new Matrix(height, width);
-        for (int i = 0; i < height; i++){
-            result.getRow(i).decrease(other);
+        int i, j;
+        for (i = 0; i < height; i++){
+            for (j = 0; j < width; j++){
+                result.setValue(i, j, getValue(i, j).sum(other));
+            }
         }
         return result;
     }
@@ -140,21 +152,10 @@ public class Matrix {
         int i, j;
         for (i = 0; i < height; i++){
             for (j = 0; j < width; j++){
-                result.getValue(i, j).repeat(other);
+                result.setValue(i, j, getValue(i, j).multiply(other));
             }
         }
         return result;
-    }
-
-    public void repeat(Matrix other){
-        if (width != other.height || height != other.width)
-            throw new UnacceptableSizeMatrixException();
-        int i, j;
-        for (i = 0; i < height; i++){
-            for (j = 0; j < other.width; j++){
-                setValue(i, j, getRow(i).multiply(other.getCol(j)));
-            }
-        }
     }
 
     public void repeat(Value other){
@@ -167,6 +168,29 @@ public class Matrix {
     }
 
 
+    // методы преобразования матрицы
+    public void transpose(){
+        Vector[] tmp = rows;
+        rows = cols;
+        cols = tmp;
+
+        int tmpSize = height;
+        height = width;
+        width = tmpSize;
+    }
+
+    public Matrix transposed(){
+        Matrix result = getClone();
+        result.transpose();
+        return result;
+    }
+
+    public Matrix minor(int row, int col){
+        Matrix result = new Matrix(height - 1, width - 1);
+        return result;
+    }
+
+
     // перевод в String
     @Override
     public String toString(){
@@ -174,7 +198,7 @@ public class Matrix {
     }
 
     public String toString(String divider){
-        String result[] = new String[height];
+        String[] result = new String[height];
         for (int i = 0; i < height; i++){
             result[i] = rows[i].toString();
         }
@@ -184,7 +208,7 @@ public class Matrix {
 
     // используется для отладки
     public String colsToString(){
-        String result[] = new String[width];
+        String[] result = new String[width];
         for (int i = 0; i < width; i++){
             result[i] = cols[i].toString();
         }
@@ -192,13 +216,28 @@ public class Matrix {
     }
 
 
-    // получение данных
+    // управление содержимым
+    public void setValue(int row, int col, Value val){
+        getRow(row).setValue(col, val);
+    }
+
+    public void setRow(int index, Vector vector){
+        rows[index] = vector;
+    }
+
+    public void setCol(int index, Vector vector){
+        cols[index] = vector;
+    }
+
+    public void clear(){} // очищает матрицу от Vector и Cell с isDeleted = true
+
+    // доступ к содержимому
     public Value getValue(int row, int col){
         return rows[row].getValue(col);
     }
 
-    public void setValue(int row, int col, Value val){
-        rows[row].setValue(col, val);
+    public Cell getCell(int row, int col) {
+        return rows[row].getCell(col);
     }
 
     public Vector getRow(int row){
@@ -207,5 +246,17 @@ public class Matrix {
 
     public Vector getCol(int col){
         return cols[col];
+    }
+
+    public Matrix getClone(){
+        Matrix result = new Matrix(height, width);
+        int i;
+        for (i = 0; i < height; i++){
+            result.setRow(i, getRow(i).getClone());
+        }
+        for (i = 0; i < width; i++){
+            result.setCol(i, getCol(i).getClone());
+        }
+        return result;
     }
 }
