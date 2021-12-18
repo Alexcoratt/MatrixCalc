@@ -1,6 +1,7 @@
 package resources.new_data_types;
 
 import resources.exceptions.DifferentSizeMatrixesException;
+import resources.exceptions.NonSquareMatrixException;
 import resources.exceptions.UnacceptableSizeMatrixException;
 
 public class Matrix {
@@ -12,46 +13,24 @@ public class Matrix {
         this.width = width;
         this.height = height;
 
-        rows = new Vector[height];
+        init();
         int i, j;
-        for (i = 0; i < height; i++){
-            rows[i] = new Vector(width);
-            for (j = 0; j < width; j++){
-                rows[i].setCell(j, new Cell());
-            }
-        }
+        for (i = 0; i < height; i++)
+            for (j = 0; j < width; j++)
+                setCell(i, j, new Cell());
 
-        cols = new Vector[width];
-        for (j = 0; j < width; j++){
-            cols[j] = new Vector(height);
-            for (i = 0; i < height; i++){
-                cols[j].setCell(i, getCell(i, j));
-            }
-        }
     }
 
     public Matrix(Value[][] mx){
         height = mx.length;
         width = mx[0].length;
 
-        rows = new Vector[height];
+        init();
         int i, j;
-        for (i = 0; i < height; i++){
-            rows[i] = new Vector(width);
-            for (j = 0; j < width; j++){
-                rows[i].setValue(j, mx[i][j]);
-            }
-        }
-
-        cols = new Vector[width];
-        for (j = 0; j < width; j++){
-            cols[j] = new Vector(height);
-            for (i = 0; i < height; i++){
-                cols[j].setValue(i, getValue(i, j));
-            }
-        }
+        for (i = 0; i < height; i++)
+            for (j = 0; j < width; j++)
+                setCell(i, j, new Cell(mx[i][j]));
     }
-
 
     // методы сложения
     public Matrix sum(Matrix other) throws DifferentSizeMatrixesException {
@@ -168,7 +147,7 @@ public class Matrix {
     }
 
 
-    // методы преобразования матрицы
+    // методы работы с матрицами
     public void transpose(){
         Vector[] tmp = rows;
         rows = cols;
@@ -177,42 +156,78 @@ public class Matrix {
         int tmpSize = height;
         height = width;
         width = tmpSize;
-    }
+    } // транспонирование текущей матрицы
 
     public Matrix transposed(){
         Matrix result = getClone();
         result.transpose();
         return result;
-    }
+    } // получение транспонированной матрицы
 
-    public Matrix minor(int row, int col){
+    public Matrix minorMatrix(int row, int col){
         Matrix result = new Matrix(height - 1, width - 1);
+        int resI = 0, resJ = 0, i, j;
+        for (i = 0; i < height; i++){
+            if (i != row){
+                for (j = 0; j < width; j++){
+                    if (j != col) {
+                        result.setCell(resI, resJ, getCell(i, j).getClone());
+                        resJ++;
+                    }
+                }
+                resI++;
+            }
+            resJ = 0;
+        }
         return result;
-    }
+    } // получение минорной матрицы (копия текущей матрицы без строки под номером row и столбца под номером col)
 
+    public Value minor(int row, int col){
+        return minorMatrix(row, col).determinant();
+    } // получение минора данной матрицы
+
+    public Value complement(int row, int col){
+        return minor(row, col).multiply((int)Math.pow(-1, row + col));
+    } // метод нахождения алгебраческого дополнения для элемента строки под номером row и столбца под номером col
+
+    public Value determinant() throws NonSquareMatrixException {
+        if (height != width)
+            throw new NonSquareMatrixException();
+
+        if (height == 2)
+            return getValue(0, 0).multiply(getValue(1, 1)).subtract(getValue(0, 1).multiply(getValue(1, 0)));
+
+        if (height == 1)
+            return getValue(0, 0);
+
+        Value result = new Value();
+        for (int i = 0; i < width; i++)
+            result.increase(getValue(i, 0).multiply(complement(i, 0)));
+        return result;
+    } // рекурсивный метод нахождения детерминанта (сложность алгоритма растет экспоненциально)
 
     // перевод в String
     @Override
     public String toString(){
-        return toString("\n");
+        return toString("\n", "\t");
     }
 
-    public String toString(String divider){
-        String[] result = new String[height];
-        for (int i = 0; i < height; i++){
-            result[i] = rows[i].toString();
+    public String toString(String rowDivider, String colDivider){
+        int i, j, maxLen = 0, len;
+        for (i = 0; i < height; i++){
+            for (j = 0; j < width; j++){
+                len = getValue(i, j).toString().length();
+                if (len > maxLen){
+                    maxLen = len;
+                }
+            }
         }
-        return String.join(divider, result);
-    }
 
-
-    // используется для отладки
-    public String colsToString(){
-        String[] result = new String[width];
-        for (int i = 0; i < width; i++){
-            result[i] = cols[i].toString();
+        StringBuilder output = new StringBuilder();
+        for (i = 0; i < height; i++){
+            output.append(rows[i].toString(maxLen, colDivider)).append(rowDivider);
         }
-        return String.join("\n", result);
+        return output.toString();
     }
 
 
@@ -221,15 +236,10 @@ public class Matrix {
         getRow(row).setValue(col, val);
     }
 
-    public void setRow(int index, Vector vector){
-        rows[index] = vector;
+    public void setCell(int row, int col, Cell cell){
+        getRow(row).setCell(col, cell);
+        getCol(col).setCell(row, cell);
     }
-
-    public void setCol(int index, Vector vector){
-        cols[index] = vector;
-    }
-
-    public void clear(){} // очищает матрицу от Vector и Cell с isDeleted = true
 
     // доступ к содержимому
     public Value getValue(int row, int col){
@@ -250,13 +260,33 @@ public class Matrix {
 
     public Matrix getClone(){
         Matrix result = new Matrix(height, width);
-        int i;
-        for (i = 0; i < height; i++){
-            result.setRow(i, getRow(i).getClone());
-        }
-        for (i = 0; i < width; i++){
-            result.setCol(i, getCol(i).getClone());
-        }
+        int i, j;
+        for (i = 0; i < height; i++)
+            for (j = 0; j < width; j++)
+                result.setValue(i, j, getValue(i, j).getClone());
         return result;
     }
+
+
+    // служебные методы
+    private void init(){
+        // инициализация rows
+        rows = new Vector[height];
+        for (int i = 0; i < height; i++){
+            rows[i] = new Vector(width);
+        }
+        // инициализация cols
+        cols = new Vector[width];
+        for (int i = 0; i < width; i++){
+            cols[i] = new Vector(height);
+        }
+    }
+
+    public String colsToString(){
+        StringBuilder output = new StringBuilder();
+        for (int i = 0; i < width; i++){
+            output.append(cols[i].toString()).append("\n");
+        }
+        return output.toString();
+    } // используется для отладки
 }

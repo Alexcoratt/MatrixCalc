@@ -2,11 +2,9 @@ package resources.new_data_types;
 
 public class Cell {
     public Value value;
-    public boolean isDeleted;
 
     public Cell(Value value){
         this.value = value;
-        isDeleted = false;
     }
 
     public Cell(){
@@ -23,13 +21,5 @@ public class Cell {
 
     public void setValue(Value value) {
         this.value = value;
-    }
-
-    public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
-    }
-
-    public void setDeleted(){
-        isDeleted = true;
     }
 }

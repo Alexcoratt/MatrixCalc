@@ -52,6 +52,14 @@ public class Value {
         number = number.multiply(other.number);
     }
 
+    public Value multiply(int other){
+        return multiply(new Value(other));
+    }
+
+    public void repeat(int other){
+        repeat(new Value(other));
+    }
+
 
     // методы деления
     public Value divide(Value other){
@@ -66,5 +74,19 @@ public class Value {
     @Override
     public String toString(){
         return String.valueOf(number);
+    }
+
+    public String toString(int strSpace){
+        String output = String.valueOf(number);
+        return output + strMul(" ", strSpace - output.length());
+    }
+
+    public static String strMul(String str, int num) {
+        StringBuilder result = new StringBuilder();
+        while (num > 0){
+            result.append(str);
+            num--;
+        }
+        return result.toString();
     }
 }

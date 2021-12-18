@@ -3,11 +3,9 @@ import resources.exceptions.*;
 
 public class Vector {
     public int length;
-    public final Cell[] cells;
-    public boolean isDeleted;
+    public Cell[] cells;
 
     public Vector(int length){
-        isDeleted = true;
         this.length = length;
         cells = new Cell[length];
         for (int i = 0; i < length; i++){
@@ -16,13 +14,11 @@ public class Vector {
     }
 
     public Vector(Cell[] cells) {
-        isDeleted = true;
         this.cells = cells;
         length = cells.length;
     }
 
     public Vector(Value[] values){
-        isDeleted = true;
         length = values.length;
         cells = new Cell[length];
         for (int i = 0; i < length; i++){
@@ -152,15 +148,19 @@ public class Vector {
     // перевод в String
     @Override
     public String toString(){
-        return toString("\t");
+        StringBuilder output = new StringBuilder();
+        for (int i = 0; i < length; i++){
+            output.append(getValue(i).toString()).append("\t");
+        }
+        return output.toString();
     }
 
-    public String toString(String divider){
-        String[] strValues = new String[length];
+    public String toString(int strSpace, String divider){
+        StringBuilder output = new StringBuilder();
         for (int i = 0; i < length; i++){
-            strValues[i] = getValue(i).toString();
+            output.append(getValue(i).toString(strSpace)).append(divider);
         }
-        return String.join(divider, strValues);
+        return output.toString();
     }
 
 
@@ -181,22 +181,6 @@ public class Vector {
         return result;
     }
 
-    public Vector getCleared() {
-        int countOfDeleted = 0;
-        for (int i = 0; i < length; i++) {
-            if (getCell(i).isDeleted)
-                countOfDeleted++;
-        }
-        Vector result = new Vector(length - countOfDeleted);
-        int counter = 0;
-        for (int i = 0; i < length; i++) {
-            if (!getCell(i).isDeleted) {
-                result.setCell(counter, getCell(i).getClone());
-                counter++;
-            }
-        }
-        return result;
-    } // Vector, очищенный от Cell с isDeleted = true
 
     // управление содержимым
     public void setValue(int index, Value value){
@@ -205,16 +189,5 @@ public class Vector {
 
     public void setCell(int index, Cell cell){
         cells[index] = cell;
-    }
-
-    public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
-        for (int i = 0; i < length; i++){
-            getCell(i).setDeleted(deleted);
-        }
-    }
-
-    public void setDeleted() {
-        setDeleted(true);
     }
 }
