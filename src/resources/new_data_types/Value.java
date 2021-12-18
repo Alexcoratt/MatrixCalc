@@ -1,6 +1,7 @@
 package resources.new_data_types;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 // пока что работает с типом данных double
 public class Value {
@@ -63,11 +64,16 @@ public class Value {
 
     // методы деления
     public Value divide(Value other){
-        return new Value(number.divide(other.number));
+        return new Value(number.divide(other.number, 15, RoundingMode.HALF_UP));
     }
 
     public void reduce(Value other){
-        number = number.divide(other.number);
+        number = number.divide(other.number, 15, RoundingMode.HALF_UP);
+    }
+
+    // методы сравнения
+    public int compare(Value other){
+        return number.compareTo(other.number);
     }
 
     // перевод в String

@@ -182,6 +182,8 @@ public class Matrix {
         return result;
     } // получение минорной матрицы (копия текущей матрицы без строки под номером row и столбца под номером col)
 
+    // набор вычисления точного детерминанта
+    // _____________________________________
     public Value minor(int row, int col){
         return minorMatrix(row, col).determinant();
     } // получение минора данной матрицы
@@ -205,6 +207,40 @@ public class Matrix {
             result.increase(getValue(i, 0).multiply(complement(i, 0)));
         return result;
     } // рекурсивный метод нахождения детерминанта (сложность алгоритма растет экспоненциально)
+    // _____________________________________
+
+    public Value fastDeterminant(){
+        if (height != width)
+            throw new NonSquareMatrixException();
+
+        Matrix mx = getClone();
+        Value zero = new Value(0);
+        Value coeff = new Value(1);
+        int i;
+        while (mx.height > 2){
+
+            for (i = 0; i < mx.height; i++){
+                if (mx.getValue(i, 0).compare(zero) != 0) {
+                    coeff.repeat(mx.getValue(i, 0));
+                    mx.getRow(i).reduce(mx.getValue(i, 0).getClone());
+                    if (mx.getValue(0, 0).compare(zero) == 0)
+                        mx.getRow(0).increase(mx.getRow(i));
+                }
+                else if (mx.getRow(i).multiply(mx.getRow(i)).compare(zero) == 0 || mx.getCol(i).multiply(mx.getCol(i)).compare(zero) == 0)
+                    return zero.getClone();
+            }
+
+            for (i = 1; i < mx.height; i++){
+                if (mx.getValue(i, 0).compare(zero) != 0)
+                    mx.getRow(i).decrease(mx.getRow(0));
+            }
+
+            mx = mx.minorMatrix(0, 0);
+        }
+
+        return mx.determinant().multiply(coeff);
+    }
+
 
     // перевод в String
     @Override

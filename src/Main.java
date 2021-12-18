@@ -1,6 +1,9 @@
 import resources.new_data_types.*;
 import resources.new_data_types.Value;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class Main {
     public static void main(String[] args){
         Value[][] arr = {
@@ -12,6 +15,7 @@ public class Main {
 
         System.out.println(mx);
         System.out.println(mx.determinant());
+        System.out.println(mx.fastDeterminant());
     }
 }
 
