@@ -1,8 +1,5 @@
-import resources.new_data_types.*;
-import resources.new_data_types.Value;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import resources.data_types.*;
+import resources.data_types.Value;
 
 public class Main {
     public static void main(String[] args){
@@ -14,8 +11,7 @@ public class Main {
         Matrix mx = new Matrix(arr);
 
         System.out.println(mx);
-        System.out.println(mx.determinant());
-        System.out.println(mx.fastDeterminant());
+        System.out.println(mx.power(-2).multiply(mx.multiply(mx)));
     }
 }
 

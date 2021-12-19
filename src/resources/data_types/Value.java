@@ -1,4 +1,4 @@
-package resources.new_data_types;
+package resources.data_types;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -64,11 +64,11 @@ public class Value {
 
     // методы деления
     public Value divide(Value other){
-        return new Value(number.divide(other.number, 15, RoundingMode.HALF_UP));
+        return new Value(number.divide(other.number, 8, RoundingMode.HALF_UP));
     }
 
     public void reduce(Value other){
-        number = number.divide(other.number, 15, RoundingMode.HALF_UP);
+        number = number.divide(other.number, 8, RoundingMode.HALF_UP);
     }
 
     // методы сравнения
@@ -87,6 +87,11 @@ public class Value {
         return output + strMul(" ", strSpace - output.length());
     }
 
+    // перевод в int
+    public int toInt(){
+        return number.intValue();
+    }
+
     public static String strMul(String str, int num) {
         StringBuilder result = new StringBuilder();
         while (num > 0){
@@ -94,5 +99,5 @@ public class Value {
             num--;
         }
         return result.toString();
-    }
+    } // повтороение подстроки str num раз
 }

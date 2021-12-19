@@ -1,4 +1,4 @@
-package resources.new_data_types;
+package resources.data_types;
 import resources.exceptions.*;
 
 public class Vector {
