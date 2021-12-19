@@ -1,5 +1,6 @@
+import resources.Parser;
+import resources.commands.*;
 import resources.data_types.*;
-import resources.data_types.Value;
 
 public class Main {
     public static void main(String[] args){
@@ -10,8 +11,8 @@ public class Main {
         };
         Matrix mx = new Matrix(arr);
 
-        System.out.println(mx);
-        System.out.println(mx.power(-2).multiply(mx.multiply(mx)));
+        Parser prs = new Parser();
+        prs.parseCommand("hello world i am a programm");
     }
 }
 

@@ -1,40 +1,42 @@
 package resources;
 
+import resources.commands.Command;
+import resources.commands.Exit;
+import resources.commands.Help;
+import resources.exceptions.CommandNotFoundException;
+
 import java.util.Arrays;
 import java.util.List;
 
 public class Parser {
+    Command[] commandList = {new Help(this), new Exit(this)};
+
     public Parser(){
     }
 
-    public void parseCommand(String command){
-        String[] parts = command.split(" ");
-        String commandName = parts[0];
-        System.out.println(Arrays.toString(divideCommand(parts)));
+    public Command find(String name) throws CommandNotFoundException {
+        for (Command command : commandList) {
+            if (command.name.equals(name))
+                return command;
+        }
+        throw new CommandNotFoundException();
     }
 
-    static String[] divideCommand(String[] parts){
-        byte i = 0;
-        while (i < parts.length && parts[i].charAt(0) == '-'){
-            i++;
-        }
-        String[] options = new String[i];
-        System.arraycopy(sortedParts(parts), 0, options, 0, i);
-        return options;
-    }
+    public void parseCommand(String com){
+        String[] parts = com.split(" ");
+        String comName = parts[0];
+        String[] flags, args;
 
-    static String[] sortedParts(String[] parts){
-        byte i, j;
-        String change;
-        for (i = 0; i < parts.length; i++){
-            for (j = i; j < parts.length - 1; j++){
-                if (parts[j].charAt(0) > parts[j + 1].charAt(0)){
-                    change = parts[j];
-                    parts[j] = parts[j + 1];
-                    parts[j + 1] = change;
-                }
-            }
-        }
-        return parts;
     }
 }
+
+/*
+* Список необходимых команд:
+* 1. Помощь (help)
+* 2. Выход (exit)
+* 3. Создать пустую матрицу
+*    (mkmx [-f (с заполнением) | -i (единичная) | -r (случайные числа от нуля до единицы) | -z по-умолчанию (нулевая)]  <название переменной с матрицей> <высота матрицы> <ширина матрицы>)
+* 4. Заполнение пустой матрицы
+*    (flmx [-i (единичная) | -r (случайные числа от нуля до единицы) | -z (нулевая)] <название переменной>)
+* 5. 
+* */
