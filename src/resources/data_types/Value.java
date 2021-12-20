@@ -71,10 +71,12 @@ public class Value {
         number = number.divide(other.number, 8, RoundingMode.HALF_UP);
     }
 
+
     // методы сравнения
     public int compare(Value other){
         return number.compareTo(other.number);
     }
+
 
     // перевод в String
     @Override
@@ -86,6 +88,7 @@ public class Value {
         String output = String.valueOf(number);
         return output + strMul(" ", strSpace - output.length());
     }
+
 
     // перевод в int
     public int toInt(){
@@ -100,4 +103,10 @@ public class Value {
         }
         return result.toString();
     } // повтороение подстроки str num раз
+
+
+    // установка значения
+    public void setRandom(){
+        number = BigDecimal.valueOf(Math.random());
+    } // устанавливает случайное значение number в диапазоне [0; 1)
 }

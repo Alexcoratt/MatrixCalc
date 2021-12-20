@@ -215,6 +215,15 @@ public class Matrix {
         }
     } // сделать матрицу единичной
 
+    public void randomize(){
+        int i, j;
+        for (i = 0; i < height; i++){
+            for (j = 0; j < width; j++){
+                getValue(i, j).setRandom();
+            }
+        }
+    } // задать матрице случайные значения в диапазоне [0; 1)
+
     public Matrix getIdentity(){
         Matrix result = getClone();
         result.identify();

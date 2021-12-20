@@ -1,15 +1,21 @@
 package resources;
 
-import resources.commands.Command;
-import resources.commands.Exit;
-import resources.commands.Help;
+import resources.commands.*;
+import resources.data_types.Matrix;
 import resources.exceptions.*;
 
 import java.util.*;
 
 public class Parser {
-    public Command[] commandList = {new Command(this), new Help(this), new Exit(this)};
+    public Command[] commandList = {
+            new Command(this),
+            new Help(this),
+            new Exit(this),
+            new MakeMatrix(this),
+            new VariableOut(this)
+    };
     Scanner scanner = new Scanner(System.in);
+    public HashMap<String, Matrix> variables = new HashMap<String, Matrix>();
 
     public Parser(){}
 
@@ -33,6 +39,8 @@ public class Parser {
                     System.out.println("ОШИБКА! Неверный набор флагов");
                 } catch (CommandErrorException e){
                     System.out.println("ОШИБКА! Ошибка команды");
+                } catch (ArrayIndexOutOfBoundsException e){
+                    System.out.println("ОШИБКА! Недостаток аргументов");
                 }
             }
         } catch (ParserExitException e){
@@ -91,4 +99,8 @@ public class Parser {
 *    (mkvar [-f (с заполнением) <числовое значение> | -z по-умолчанию (присвоить 0)] <название переменной>)
 * 7. Запись значения в переменную
 *    (setvar [-z по умолчанию (присвоить 0)] <название переменной> <числовое значение>)
+* 8. Вывод значения переменной
+*    (varout <название переменной>)
+* 9. Удаление переменной
+*    (unset <название переменной>)
 * */

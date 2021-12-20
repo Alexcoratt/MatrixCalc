@@ -1,6 +1,7 @@
 package resources.commands;
 
 import resources.Parser;
+import resources.data_types.Matrix;
 import resources.exceptions.ParserException;
 
 import java.util.Arrays;
@@ -17,6 +18,10 @@ public class Command {
 
     public String getSyntaxTip(){
         return "Синтаксис: " + syntaxTip;
+    }
+
+    public Matrix getVar(String name){
+        return parser.variables.get(name);
     }
 
     public void init(){
