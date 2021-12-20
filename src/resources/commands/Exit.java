@@ -1,6 +1,8 @@
 package resources.commands;
 
 import resources.Parser;
+import resources.exceptions.InvalidFlagSetException;
+import resources.exceptions.ParserException;
 import resources.exceptions.ParserExitException;
 
 import java.util.HashMap;
@@ -15,10 +17,14 @@ public class Exit extends Command{
         name = "exit";
         description = "Завершение работы программы";
         syntaxTip = "exit";
+        validFlagSets = new String[]{""};
     }
 
     @Override
-    public void function(HashMap<String, String> flags, String[] args) throws ParserExitException {
-        throw new ParserExitException();
+    public void function(char[] flags, String[] args) throws ParserException {
+        if (isValidFlagSet(flags))
+            throw new ParserExitException();
+        else
+            throw new InvalidFlagSetException();
     }
 }

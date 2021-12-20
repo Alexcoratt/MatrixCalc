@@ -3,17 +3,15 @@ package resources;
 import resources.commands.Command;
 import resources.commands.Exit;
 import resources.commands.Help;
-import resources.exceptions.CommandNotFoundException;
-import resources.exceptions.ParserExitException;
+import resources.exceptions.*;
 
 import java.util.*;
 
 public class Parser {
-    Command[] commandList = {new Command(this), new Help(this), new Exit(this)};
+    public Command[] commandList = {new Command(this), new Help(this), new Exit(this)};
     Scanner scanner = new Scanner(System.in);
 
-    public Parser(){
-    }
+    public Parser(){}
 
     public Command find(String name) throws CommandNotFoundException {
         for (Command command : commandList) {
@@ -27,35 +25,52 @@ public class Parser {
         try{
             while (true){
                 try {
+                    System.out.print("> ");
                     parseCommand(scanner.nextLine());
                 } catch (CommandNotFoundException e){
                     System.out.println("ОШИБКА! Команда не найдена");
+                } catch (InvalidFlagSetException e){
+                    System.out.println("ОШИБКА! Неверный набор флагов");
+                } catch (CommandErrorException e){
+                    System.out.println("ОШИБКА! Ошибка команды");
                 }
             }
         } catch (ParserExitException e){
             System.out.println("Парсер завершил работу");
+        } catch (ParserException e){
+            System.out.println("ОШИБКА! Ошибка парсера");
         }
     }
 
-    public void parseCommand(String com) throws CommandNotFoundException, ParserExitException {
+    public void parseCommand(String com) throws ParserException {
         String[] parts = com.split(" ");
         String comName = parts[0];
-        HashMap<String, String> flags = new HashMap<String, String>();
-        ArrayList<String> argsList = new ArrayList<String>();
+        int partLen, i, j, flagsCount = 0, argsCount = 0;
 
-        for (int i = 1; i < parts.length; i++) {
+        for (i = 1; i < parts.length; i++) {
             if (parts[i].charAt(0) == '-') {
-                try {
-                    flags.put(String.valueOf(parts[i].charAt(1)), parts[i + 1]);
-                } catch (ArrayIndexOutOfBoundsException e){
-                    flags.put(String.valueOf(parts[i].charAt(1)), "");
-                }
+                partLen = parts[i].length();
+                flagsCount += partLen - 1;
             }
-            else if (parts[i - 1].charAt(0) != '-') {
-                argsList.add(parts[i]);
+            else {
+                argsCount++;
             }
         }
-        String[] args = argsList.toArray(new String[0]);
+
+        char[] flags = new char[flagsCount];
+        String[] args = new String[argsCount];
+        int flagsCounter = 0, argsCounter = 0;
+        for (i = 1; i < parts.length; i++) {
+            if (parts[i].charAt(0) == '-') {
+                partLen = parts[i].length();
+                for (j = 1; j < partLen; j++)
+                    flags[flagsCounter++] = parts[i].charAt(j);
+            }
+            else {
+                args[argsCounter++] = parts[i];
+            }
+        }
+
         find(comName).function(flags, args);
     }
 }
@@ -63,7 +78,7 @@ public class Parser {
 /*
 * Список необходимых команд:
 * 1. Помощь
-*    (help [-s (синтаксис)] [-d по-умолчанию (описание)] [-f (полное описание)] <названия команд>)
+*    (help [-s (синтаксис)] [-d по-умолчанию (описание)] [-f (полное описание)] [<названия команд>])
 * 2. Выход
 *    (exit)
 * 3. Создание пустой матрицы
@@ -75,5 +90,5 @@ public class Parser {
 * 6. Создание пустой числовой переменной
 *    (mkvar [-f (с заполнением) <числовое значение> | -z по-умолчанию (присвоить 0)] <название переменной>)
 * 7. Запись значения в переменную
-*    (setvar [-z (присвоить 0)] <название переменной> <числовое значение>)
+*    (setvar [-z по умолчанию (присвоить 0)] <название переменной> <числовое значение>)
 * */

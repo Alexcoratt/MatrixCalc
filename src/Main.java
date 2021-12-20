@@ -12,6 +12,8 @@ public class Main {
         Matrix mx = new Matrix(arr);
 
         Parser prs = new Parser();
+        Help help = new Help(prs);
+        //System.out.println(help.isSubChar('a', "a"));
         prs.loop();
     }
 }

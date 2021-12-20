@@ -1,3 +1,3 @@
 package resources.exceptions;
 
-public class CommandNotFoundException extends Exception{}
+public class CommandNotFoundException extends CommandErrorException{}

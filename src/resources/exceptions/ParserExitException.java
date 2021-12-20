@@ -1,3 +1,3 @@
 package resources.exceptions;
 
-public class ParserExitException extends Exception{}
+public class ParserExitException extends ParserException{}
