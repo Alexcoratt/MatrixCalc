@@ -3,7 +3,7 @@ import resources.commands.*;
 import resources.data_types.*;
 
 public class Main {
-    public static void main(String[] args){
+    public static void main(String[] args) {
         Value[][] arr = {
                 {new Value(3), new Value(2), new Value(2)},
                 {new Value(1), new Value(-5), new Value(-8)},
@@ -12,7 +12,7 @@ public class Main {
         Matrix mx = new Matrix(arr);
 
         Parser prs = new Parser();
-        prs.parseCommand("hello world i am a programm");
+        prs.loop();
     }
 }
 

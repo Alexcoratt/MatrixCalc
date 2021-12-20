@@ -3,6 +3,9 @@ package resources.commands;
 import resources.Parser;
 import resources.exceptions.ParserExitException;
 
+import java.util.Arrays;
+import java.util.HashMap;
+
 public class Command {
     public String name, description, syntaxTip;
     public Parser parser;
@@ -18,7 +21,10 @@ public class Command {
         syntaxTip = "cmd/nФлагов нет";
     }
 
-    public void function(String flags, String arg) throws ParserExitException {
-        System.out.println("nothing");
+    public void function(HashMap<String, String> flags, String[] args) throws ParserExitException {
+        for (String flag : flags.keySet()){
+            System.out.println(flag + " " + flags.get(flag));
+        }
+        System.out.println(Arrays.toString(args));
     }
 }

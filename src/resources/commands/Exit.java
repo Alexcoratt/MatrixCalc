@@ -3,6 +3,8 @@ package resources.commands;
 import resources.Parser;
 import resources.exceptions.ParserExitException;
 
+import java.util.HashMap;
+
 public class Exit extends Command{
     public Exit(Parser parser) {
         super(parser);
@@ -16,7 +18,7 @@ public class Exit extends Command{
     }
 
     @Override
-    public void function(String flags, String arg) throws ParserExitException {
+    public void function(HashMap<String, String> flags, String[] args) throws ParserExitException {
         throw new ParserExitException();
     }
 }
