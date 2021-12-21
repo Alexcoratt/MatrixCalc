@@ -208,21 +208,26 @@ public class Matrix {
         for (i = 0; i < height; i++){
             for (j = 0; j < width; j++){
                 if (i != j)
-                    setValue(i, j, new Value(0));
+                    getValue(i, j).setNumber(0);
                 else
-                    setValue(i, j, new Value(1));
+                    getValue(i, j).setNumber(1);
             }
         }
     } // сделать матрицу единичной
 
     public void randomize(){
         int i, j;
-        for (i = 0; i < height; i++){
-            for (j = 0; j < width; j++){
+        for (i = 0; i < height; i++)
+            for (j = 0; j < width; j++)
                 getValue(i, j).setRandom();
-            }
-        }
     } // задать матрице случайные значения в диапазоне [0; 1)
+
+    public void makeZero(){
+        int i, j;
+        for (i = 0; i < height; i++)
+            for (j = 0; j < width; j++)
+                getValue(i, j).setNumber(0);
+    }
 
     public Matrix getIdentity(){
         Matrix result = getClone();
@@ -361,9 +366,10 @@ public class Matrix {
         }
 
         StringBuilder output = new StringBuilder();
-        for (i = 0; i < height; i++){
+        for (i = 0; i < height - 1; i++){
             output.append(rows[i].toString(maxLen, colDivider)).append(rowDivider);
         }
+        output.append(rows[i].toString(maxLen, colDivider));
         return output.toString();
     }
 

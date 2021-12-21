@@ -3,6 +3,7 @@ package resources.commands;
 import resources.Parser;
 import resources.exceptions.InvalidFlagSetException;
 import resources.exceptions.ParserException;
+import resources.exceptions.VariableDoesNotExistException;
 
 public class VariableOut extends Command{
     public VariableOut(Parser parser) {
@@ -12,18 +13,17 @@ public class VariableOut extends Command{
     public void init(){
         name = "varout";
         description = "Вывод значения переменной";
-        syntaxTip = "varout <название переменной>";
+        syntaxTip = "varout <имя переменной>";
         validFlagSets = new String[]{""};
     }
 
     @Override
     public void function(char[] flags, String[] args) throws ParserException {
         if (isValidFlagSet(flags)){
-            try {
-                System.out.print(getVar(args[0]).toString());
-            } catch (NullPointerException e){
-                System.out.println("ОШИБКА! Переменная не найдена");
-            }
+            Object variable = parser.getVar(args[0]);
+            if (variable == null)
+                throw new VariableDoesNotExistException();
+            System.out.println(variable);
         }
         else
             throw new InvalidFlagSetException();

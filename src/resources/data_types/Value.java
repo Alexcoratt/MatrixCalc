@@ -8,7 +8,7 @@ public class Value {
     public BigDecimal number;
 
     public Value(double num){
-        number = new BigDecimal(num);
+        number = BigDecimal.valueOf(num);
     }
 
     public Value(BigDecimal num){
@@ -16,7 +16,7 @@ public class Value {
     }
 
     public Value(){
-        number = new BigDecimal(0);
+        number = BigDecimal.valueOf(0.0);
     }
 
     public Value(String strNum){
@@ -25,6 +25,10 @@ public class Value {
 
     public Value getClone(){
         return new Value(number);
+    }
+
+    public void setNumber(double num) {
+        number = BigDecimal.valueOf(num);
     }
 
 

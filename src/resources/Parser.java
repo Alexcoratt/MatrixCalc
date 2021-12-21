@@ -13,13 +13,48 @@ public class Parser {
             new Exit(this),
             new MakeMatrix(this),
             new VariableOut(this),
-            new FillMatrix(this)
+            new FillMatrix(this),
+            new MakeVariable(this),
+            new FillVariable(this),
+            new Unset(this),
+            new VariableList(this)
     };
     public Scanner scanner = new Scanner(System.in);
-    public HashMap<String, Matrix> variables = new HashMap<String, Matrix>();
+    public HashMap<String, Object> variables = new HashMap<String, Object>();
 
     public Parser(){}
 
+
+    // служебные методы
+    public boolean isIn(Object elem, Object[] arr){
+        for (Object part : arr){
+            if (Objects.equals(part, elem))
+                return true;
+        }
+        return false;
+    }
+
+    public String[] split(String str, String ...dividers){
+        for (String divider : dividers){
+            str = str.replace(divider, dividers[0]);
+        }
+        String[] parts = str.split(dividers[0]), result;
+        int resLen = parts.length;
+        for (String part : parts){
+            if (isIn(part, dividers) || Objects.equals(part, ""))
+                resLen--;
+        }
+        result = new String[resLen];
+        int resCounter = 0;
+        for (String part : parts){
+            if (!isIn(part, dividers) && !Objects.equals(part, ""))
+                result[resCounter++] = part;
+        }
+        return result;
+    }
+
+
+    // методы работы с командами
     public Command find(String name) throws CommandNotFoundException {
         for (Command command : commandList) {
             if (command.name.equals(name))
@@ -28,6 +63,18 @@ public class Parser {
         throw new CommandNotFoundException();
     }
 
+
+    // методы работы с переменными
+    public Object getVar(String varName){
+        return variables.get(varName);
+    }
+
+    public void addVar(String key, Object value){
+        variables.put(key, value);
+    }
+
+
+    // метод запуска
     public void loop(){
         try{
             while (true){
@@ -38,10 +85,16 @@ public class Parser {
                     System.out.println("ОШИБКА! Команда не найдена");
                 } catch (InvalidFlagSetException e){
                     System.out.println("ОШИБКА! Неверный набор флагов");
+                } catch (TooFewArgumentsException e){
+                    System.out.println("ОШИБКА! Недостаток аргументов");
+                } catch (TooManyArgumentsException e){
+                    System.out.println("ОШИБКА! Избыток аргументов");
+                } catch (VariableHasAlreadyExistException e){
+                    System.out.println("ОШИБКА! Переменная с данным именем уже существует");
+                } catch (VariableDoesNotExistException e){
+                    System.out.println("ОШИБКА! Переменная с данным именем не существует");
                 } catch (CommandErrorException e){
                     System.out.println("ОШИБКА! Ошибка команды");
-                } catch (ArrayIndexOutOfBoundsException e){
-                    System.out.println("ОШИБКА! Недостаток аргументов");
                 }
             }
         } catch (ParserExitException e){
@@ -52,35 +105,35 @@ public class Parser {
     }
 
     public void parseCommand(String com) throws ParserException {
-        String[] parts = com.split(" ");
-        String comName = parts[0];
-        int partLen, i, j, flagsCount = 0, argsCount = 0;
+        String[] parts = split(com, " ", "\t");
+        try {
+            String comName = parts[0];
+            int partLen, i, j, flagsCount = 0, argsCount = 0;
 
-        for (i = 1; i < parts.length; i++) {
-            if (parts[i].charAt(0) == '-') {
-                partLen = parts[i].length();
-                flagsCount += partLen - 1;
+            for (i = 1; i < parts.length; i++) {
+                if (parts[i].charAt(0) == '-') {
+                    partLen = parts[i].length();
+                    flagsCount += partLen - 1;
+                } else {
+                    argsCount++;
+                }
             }
-            else {
-                argsCount++;
-            }
-        }
 
-        char[] flags = new char[flagsCount];
-        String[] args = new String[argsCount];
-        int flagsCounter = 0, argsCounter = 0;
-        for (i = 1; i < parts.length; i++) {
-            if (parts[i].charAt(0) == '-') {
-                partLen = parts[i].length();
-                for (j = 1; j < partLen; j++)
-                    flags[flagsCounter++] = parts[i].charAt(j);
+            char[] flags = new char[flagsCount];
+            String[] args = new String[argsCount];
+            int flagsCounter = 0, argsCounter = 0;
+            for (i = 1; i < parts.length; i++) {
+                if (parts[i].charAt(0) == '-') {
+                    partLen = parts[i].length();
+                    for (j = 1; j < partLen; j++)
+                        flags[flagsCounter++] = parts[i].charAt(j);
+                } else {
+                    args[argsCounter++] = parts[i];
+                }
             }
-            else {
-                args[argsCounter++] = parts[i];
-            }
-        }
 
-        find(comName).function(flags, args);
+            find(comName).function(flags, args);
+        } catch (ArrayIndexOutOfBoundsException e){}
     }
 }
 
@@ -91,17 +144,17 @@ public class Parser {
 * 2. Выход
 *    (exit)
 * 3. Создание пустой матрицы
-*    (mkmx [-f (с заполнением) | -i (единичная) | -r (случайные числа от нуля до единицы) | -z по-умолчанию (нулевая)]  <название переменной с матрицей> <высота матрицы> <ширина матрицы>)
+*    (mkmx [-f (с заполнением) | -i (единичная) | -r (случайные числа от нуля до единицы) | -z по-умолчанию (нулевая)]  <имя переменной с матрицей> <высота матрицы> <ширина матрицы>)
 * 4. Заполнение пустой матрицы
-*    (flmx [-i (единичная) | -r (случайные числа от нуля до единицы) | -z (нулевая) | -m по умолчанию (вручную)] <название переменной>)
+*    (flmx [-i (единичная) | -r (случайные числа от нуля до единицы) | -z (нулевая) | -m по умолчанию (вручную)] <имя переменной>)
 * 5. Вычисление значения выражения
-*    (calc [-v <название переменной> (с записью в переменную)] <выражение из переменных и чисел>)
+*    (calc [-v <имя переменной> (с записью в переменную)] <выражение из переменных и чисел>)
 * 6. Создание пустой числовой переменной
-*    (mkvar [-f (с заполнением) | -z по-умолчанию (присвоить 0)] <название переменной>)
+*    (mkvar [-f (с заполнением) | -z по-умолчанию (присвоить 0)] <имя переменной>)
 * 7. Запись значения в переменную
-*    (setvar [-z по умолчанию (присвоить 0)] <название переменной> <числовое значение>)
+*    (flvar <имя переменной> <числовое значение>)
 * 8. Вывод значения переменной
-*    (varout <название переменной>)
+*    (varout <имя переменной>)
 * 9. Удаление переменной
-*    (unset <название переменной>)
+*    (unset <имена переменных>)
 * */

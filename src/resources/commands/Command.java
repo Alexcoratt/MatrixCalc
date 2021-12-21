@@ -20,10 +20,6 @@ public class Command {
         return "Синтаксис: " + syntaxTip;
     }
 
-    public Matrix getVar(String name){
-        return parser.variables.get(name);
-    }
-
     public void init(){
         name = "cmd";
         description = "Базовая команда";
@@ -35,6 +31,14 @@ public class Command {
         int strLen = str.length();
         for (int i = 0; i < strLen; i++)
             if (subChar == str.charAt(i))
+                return true;
+        return false;
+    }
+
+    public boolean isSubChar(char subChar, char[] str){
+        int strLen = str.length;
+        for (char c : str)
+            if (subChar == c)
                 return true;
         return false;
     }
