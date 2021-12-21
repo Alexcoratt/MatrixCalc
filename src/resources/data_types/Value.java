@@ -19,6 +19,10 @@ public class Value {
         number = new BigDecimal(0);
     }
 
+    public Value(String strNum){
+        number = BigDecimal.valueOf(Double.parseDouble(strNum));
+    }
+
     public Value getClone(){
         return new Value(number);
     }
