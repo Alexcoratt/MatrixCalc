@@ -24,8 +24,6 @@ public class FillMatrix extends Command{
     public void function(char[] flags, String[] args) throws ParserException {
         if (isValidFlagSet(flags)){
             Matrix mx = (Matrix) parser.getVar(args[0]);
-            if (mx == null)
-                throw new VariableDoesNotExistException();
             if (flags.length == 0 || flags[0] == 'm'){
                 System.out.println("Введите значения матрицы (отделяя элементы строк пробелом или табуляцией, а столбцы - переносом строки)");
                 System.out.println("Строк: " + mx.height);

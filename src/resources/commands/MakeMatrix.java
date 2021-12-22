@@ -25,9 +25,6 @@ public class MakeMatrix extends Command{
             try {
                 String varName = args[0];
                 int mxHeight = Integer.parseInt(args[1]), mxWidth = Integer.parseInt(args[2]);
-                if (parser.getVar(varName) != null)
-                    throw new VariableHasAlreadyExistException();
-
                 Matrix mx = new Matrix(mxHeight, mxWidth);
                 parser.addVar(varName, mx);
 

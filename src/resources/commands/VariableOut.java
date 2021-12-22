@@ -21,8 +21,6 @@ public class VariableOut extends Command{
     public void function(char[] flags, String[] args) throws ParserException {
         if (isValidFlagSet(flags)){
             Object variable = parser.getVar(args[0]);
-            if (variable == null)
-                throw new VariableDoesNotExistException();
             System.out.println(variable);
         }
         else

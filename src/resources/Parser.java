@@ -1,5 +1,6 @@
 package resources;
 
+import resources.arithmetics.*;
 import resources.commands.*;
 import resources.data_types.Matrix;
 import resources.exceptions.*;
@@ -17,8 +18,19 @@ public class Parser {
             new MakeVariable(this),
             new FillVariable(this),
             new Unset(this),
-            new VariableList(this)
+            new VariableList(this),
+            new Calculate(this)
     };
+
+    public Operator[] operators = {
+            new Operator(),
+            new Sum(),
+            new Subtraction(),
+            new Multiplication(),
+            new Division(),
+            new Power()
+    };
+
     public Scanner scanner = new Scanner(System.in);
     public HashMap<String, Object> variables = new HashMap<String, Object>();
 
@@ -64,13 +76,35 @@ public class Parser {
     }
 
 
-    // методы работы с переменными
-    public Object getVar(String varName){
-        return variables.get(varName);
+    // методы работы с операторами
+    public Operator getOperator(char symbol) throws OperatorDoesNotExistException{
+        for (Operator op : operators){
+            if (op.symbol == symbol)
+                return op;
+        }
+        throw new OperatorDoesNotExistException();
     }
 
-    public void addVar(String key, Object value){
-        variables.put(key, value);
+    public Operator getOperator(){
+        return operators[0];
+    }
+
+
+    // методы работы с переменными
+    public Object getVar(String varName) throws VariableDoesNotExistException {
+        Object variable = variables.get(varName);
+        if (variable == null)
+            throw new VariableDoesNotExistException();
+        return variable;
+    }
+
+    public void addVar(String key, Object value) throws VariableHasAlreadyExistException{
+        try{
+            getVar(key);
+            throw new VariableHasAlreadyExistException();
+        } catch (VariableDoesNotExistException e) {
+            variables.put(key, value);
+        }
     }
 
 
@@ -95,6 +129,8 @@ public class Parser {
                     System.out.println("ОШИБКА! Переменная с данным именем не существует");
                 } catch (CommandErrorException e){
                     System.out.println("ОШИБКА! Ошибка команды");
+                } catch (WrongExpressionException e){
+                    System.out.println("ОШИБКА! Неверное написание выражения");
                 }
             }
         } catch (ParserExitException e){
@@ -148,7 +184,7 @@ public class Parser {
 * 4. Заполнение пустой матрицы
 *    (flmx [-i (единичная) | -r (случайные числа от нуля до единицы) | -z (нулевая) | -m по умолчанию (вручную)] <имя переменной>)
 * 5. Вычисление значения выражения
-*    (calc [-v <имя переменной> (с записью в переменную)] <выражение из переменных и чисел>)
+*    (calc [-v <имя переменной> (с записью в переменную)])
 * 6. Создание пустой числовой переменной
 *    (mkvar [-f (с заполнением) | -z по-умолчанию (присвоить 0)] <имя переменной>)
 * 7. Запись значения в переменную

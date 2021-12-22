@@ -26,8 +26,6 @@ public class FillVariable extends Command{
                 throw new TooFewArgumentsException();
             else {
                 Value value = (Value) parser.getVar(args[0]);
-                if (value == null)
-                    throw new VariableDoesNotExistException();
                 System.out.println("Введите значение переменной (вещественное число)");
                 value.setNumber(Double.parseDouble(parser.scanner.nextLine()));
             }

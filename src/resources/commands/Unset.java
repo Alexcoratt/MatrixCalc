@@ -29,8 +29,6 @@ public class Unset extends Command{
             Object[] vars = new Object[args.length];
             for (int i = 0; i < args.length; i++){
                 vars[i] = parser.getVar(args[i]);
-                if (vars[i] == null)
-                    throw new VariableDoesNotExistException();
             }
             for (int i = 0; i < args.length; i++){
                 vars[i] = null;

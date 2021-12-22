@@ -25,9 +25,6 @@ public class MakeVariable extends Command{
             try {
                 String varName = args[0];
 
-                if (parser.getVar(varName) != null)
-                    throw new VariableHasAlreadyExistException();
-
                 Value value = new Value();
                 if (flags.length == 0 || flags[0] == 'z') {
                     parser.addVar(varName, value);

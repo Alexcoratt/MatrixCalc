@@ -91,7 +91,7 @@ public class Matrix {
         int i, j;
         for (i = 0; i < height; i++){
             for (j = 0; j < width; j++){
-                result.setValue(i, j, getValue(i, j).sum(other));
+                result.setValue(i, j, getValue(i, j).subtract(other));
             }
         }
         return result;

@@ -69,6 +69,10 @@ public class Value {
         repeat(new Value(other));
     }
 
+    public Value power(Value other) {
+        return new Value(number.pow(other.toInt()));
+    }
+
 
     // методы деления
     public Value divide(Value other){
