@@ -23,7 +23,12 @@ public class Node {
                 value = new Value(Double.parseDouble(expression));
             } catch (NumberFormatException e){
                 try {
-                    value = parser.getVar(expression);
+                    if (expression.startsWith("det")) {
+                        expression = expression.substring(4, expression.length() - 1);
+                        value = ((Matrix) parser.getVar(expression)).fastDeterminant();
+                    }
+                    else
+                        value = parser.getVar(expression);
                 } catch (VariableDoesNotExistException e1){
                     System.out.println("ОШИБКА! Переменная с именем "+ expression + " не существует");
                 }
