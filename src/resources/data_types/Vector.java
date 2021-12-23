@@ -120,16 +120,6 @@ public class Vector {
 
 
     // методы деления
-    public Value divide(Vector other) throws DifferentVectorSizeException{
-        if (length != other.length)
-            throw new DifferentVectorSizeException();
-        Value result = new Value();
-        for (int i = 0; i < length; i++){
-            result.increase(getValue(i).divide(other.getValue(i)));
-        }
-        return result;
-    }
-
     public Vector divide(Value other){
         Vector result = new Vector(length);
         for (int i = 0; i < length; i++){

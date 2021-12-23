@@ -3,7 +3,6 @@ package resources.data_types;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-// пока что работает с типом данных double
 public class Value {
     public BigDecimal number;
 
