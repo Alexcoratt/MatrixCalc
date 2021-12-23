@@ -131,6 +131,8 @@ public class Parser {
                     System.out.println("ОШИБКА! Ошибка команды");
                 } catch (WrongExpressionException e){
                     System.out.println("ОШИБКА! Неверное написание выражения");
+                } catch (UnacceptableSizeMatrixException e){
+                    System.out.println("ОШИБКА! Размеры матриц не позволяют провести данную операцию");
                 }
             }
         } catch (ParserExitException e){

@@ -114,7 +114,7 @@ public class Matrix {
 
     // методы умножения
     public Matrix multiply(Matrix other) throws UnacceptableSizeMatrixException {
-        if (width != other.height || height != other.width)
+        if (width != other.height)
             throw new UnacceptableSizeMatrixException();
         Matrix result = new Matrix(height, other.width);
         int i, j;
