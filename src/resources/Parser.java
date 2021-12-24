@@ -132,12 +132,17 @@ public class Parser {
                     System.out.println("ОШИБКА! Неверное написание выражения");
                 } catch (UnacceptableMatrixSizeException e){
                     System.out.println("ОШИБКА! Размеры матриц не позволяют провести данную операцию");
+                } catch (ClassCastException e){
+                    System.out.println("ОШИБКА! Значение неподходящего типа");
                 }
             }
         } catch (ParserExitException e){
             System.out.println("Парсер завершил работу");
         } catch (ParserException e){
             System.out.println("ОШИБКА! Ошибка парсера");
+        } catch (Exception e){
+            System.out.println("ОШИБКА! Неизвестная ошибка");
+            System.out.println(e);
         }
     }
 
