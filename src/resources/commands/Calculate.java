@@ -23,8 +23,7 @@ public class Calculate extends Command{
                 *  умножение
                 /  деление
                 ^  возведение в степень
-                det(<имя переменной>)  определитель матрицы
-                """;
+                det(<имя переменной>)  определитель матрицы""";
         validFlagSets = new String[]{"v"};
     }
 
