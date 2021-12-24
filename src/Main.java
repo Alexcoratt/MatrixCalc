@@ -1,14 +1,9 @@
-import resources.Parser;
-import resources.commands.*;
-import resources.data_types.*;
+import parser.Parser;
 
 public class Main {
     public static void main(String[] args){
+        System.out.println("Добро пожаловать! Перед вами Матричный калькулятор\nВведите \"help\", чтобы начать");
         Parser prs = new Parser();
         prs.loop();
     }
 }
-
-// ДЛЯ ВЫЧИСЛЕНИЙ ИСПОЛЬЗУЙ ДЕРЕВЬЯ С ПРЯМЫМ ОБХОДОМ!!!!!!
-// (a + b) * (c + d)
-// *(+(a, b), +(c, d)) или *+ab+cd
