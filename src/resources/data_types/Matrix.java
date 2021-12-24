@@ -1,8 +1,8 @@
 package resources.data_types;
 
-import resources.exceptions.DifferentSizeMatrixesException;
+import resources.exceptions.DifferentMatrixSizeException;
 import resources.exceptions.NonSquareMatrixException;
-import resources.exceptions.UnacceptableSizeMatrixException;
+import resources.exceptions.UnacceptableMatrixSizeException;
 
 public class Matrix {
     public int width, height;
@@ -33,9 +33,9 @@ public class Matrix {
     }
 
     // методы сложения
-    public Matrix sum(Matrix other) throws DifferentSizeMatrixesException {
+    public Matrix sum(Matrix other) throws DifferentMatrixSizeException {
         if (height != other.height || width != other.width)
-            throw new DifferentSizeMatrixesException();
+            throw new DifferentMatrixSizeException();
         Matrix result = new Matrix(height, width);
         int i, j;
         for (i = 0; i < height; i++){
@@ -57,9 +57,9 @@ public class Matrix {
         return result;
     }
 
-    public void increase(Matrix other) throws DifferentSizeMatrixesException {
+    public void increase(Matrix other) throws DifferentMatrixSizeException {
         if (height != other.height || width != other.width)
-            throw new DifferentSizeMatrixesException();
+            throw new DifferentMatrixSizeException();
         for (int i = 0; i < height; i++){
             getRow(i).increase(other.getRow(i));
         }
@@ -73,9 +73,9 @@ public class Matrix {
 
 
     // методы вычитания
-    public Matrix subtract(Matrix other) throws DifferentSizeMatrixesException {
+    public Matrix subtract(Matrix other) throws DifferentMatrixSizeException {
         if (height != other.height || width != other.width)
-            throw new DifferentSizeMatrixesException();
+            throw new DifferentMatrixSizeException();
         Matrix result = new Matrix(height, width);
         int i, j;
         for (i = 0; i < height; i++){
@@ -86,7 +86,7 @@ public class Matrix {
         return result;
     }
 
-    public Matrix subtract(Value other) throws DifferentSizeMatrixesException {
+    public Matrix subtract(Value other) throws DifferentMatrixSizeException {
         Matrix result = new Matrix(height, width);
         int i, j;
         for (i = 0; i < height; i++){
@@ -97,9 +97,9 @@ public class Matrix {
         return result;
     }
 
-    public void decrease(Matrix other) throws DifferentSizeMatrixesException {
+    public void decrease(Matrix other) throws DifferentMatrixSizeException {
         if (height != other.height || width != other.width)
-            throw new DifferentSizeMatrixesException();
+            throw new DifferentMatrixSizeException();
         for (int i = 0; i < height; i++){
             getRow(i).decrease(other.getRow(i));
         }
@@ -113,9 +113,9 @@ public class Matrix {
 
 
     // методы умножения
-    public Matrix multiply(Matrix other) throws UnacceptableSizeMatrixException {
+    public Matrix multiply(Matrix other) throws UnacceptableMatrixSizeException {
         if (width != other.height)
-            throw new UnacceptableSizeMatrixException();
+            throw new UnacceptableMatrixSizeException();
         Matrix result = new Matrix(height, other.width);
         int i, j;
         for (i = 0; i < height; i++){

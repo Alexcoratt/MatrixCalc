@@ -1,3 +1,3 @@
 package resources.exceptions;
 
-public class DifferentVectorSizeException extends DifferentSizeMatrixesException{}
+public class DifferentVectorSizeException extends DifferentMatrixSizeException {}

@@ -2,7 +2,6 @@ package resources;
 
 import resources.arithmetics.*;
 import resources.commands.*;
-import resources.data_types.Matrix;
 import resources.exceptions.*;
 
 import java.util.*;
@@ -131,7 +130,7 @@ public class Parser {
                     System.out.println("ОШИБКА! Ошибка команды");
                 } catch (WrongExpressionException e){
                     System.out.println("ОШИБКА! Неверное написание выражения");
-                } catch (UnacceptableSizeMatrixException e){
+                } catch (UnacceptableMatrixSizeException e){
                     System.out.println("ОШИБКА! Размеры матриц не позволяют провести данную операцию");
                 }
             }

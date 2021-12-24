@@ -1,3 +1,3 @@
 package resources.exceptions;
 
-public class NonSquareMatrixException extends UnacceptableSizeMatrixException {}
+public class NonSquareMatrixException extends UnacceptableMatrixSizeException {}
