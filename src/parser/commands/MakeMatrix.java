@@ -1,4 +1,4 @@
-package commands;
+package parser.commands;
 
 import parser.Parser;
 import data_types.Matrix;

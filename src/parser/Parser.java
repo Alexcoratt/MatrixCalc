@@ -1,7 +1,7 @@
 package parser;
 
 import arithmetics.*;
-import commands.*;
+import parser.commands.*;
 import exceptions.*;
 
 import java.util.*;
@@ -110,6 +110,7 @@ public class Parser {
     // метод запуска
     public void loop(){
         try{
+            System.out.println("Парсер запущен\nВведите \"help\", чтобы начать");
             while (true){
                 try {
                     System.out.print("> ");
